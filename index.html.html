@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Một lời nhắn dành cho em</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+    min-height:100vh;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Georgia,"Times New Roman",serif;
+    background:
+        radial-gradient(circle at 50% 35%,#321a20 0%,#180f12 45%,#09090a 100%);
+    color:#eee5df;
+}
+
+body:after{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(circle,transparent 25%,rgba(0,0,0,.48) 100%);
+}
+
+.scene{
+    position:relative;
+    width:100%;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* Envelope */
+.envelope-wrap{
+    position:relative;
+    width:360px;
+    height:260px;
+    cursor:pointer;
+    transition:opacity .8s ease,transform .8s ease;
+}
+
+.envelope{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:190px;
+    background:#2b171c;
+    border:1px solid #5c2934;
+    box-shadow:0 25px 65px rgba(0,0,0,.6);
+}
+
+.envelope:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:#381b22;
+    clip-path:polygon(0 0,50% 58%,100% 0,100% 100%,0 100%);
+}
+
+.flap{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:135px;
+    background:#4a2029;
+    clip-path:polygon(0 0,100% 0,50% 100%);
+    transform-origin:top;
+    transition:transform 1s ease;
+    z-index:5;
+}
+
+.seal{
+    position:absolute;
+    left:50%;
+    top:82px;
+    transform:translateX(-50%);
+    width:47px;
+    height:47px;
+    border-radius:50%;
+    background:#8e2637;
+    color:#ead7d1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:17px;
+    z-index:7;
+    box-shadow:0 5px 18px rgba(0,0,0,.45);
+    border:1px solid #a84959;
+    transition:.5s ease;
+}
+
+.card{
+    position:absolute;
+    left:50%;
+    bottom:20px;
+    transform:translateX(-50%);
+    width:290px;
+    height:165px;
+    background:#eee6df;
+    color:#34272a;
+    padding:30px 25px;
+    text-align:center;
+    box-shadow:0 15px 35px rgba(0,0,0,.35);
+    opacity:0;
+    z-index:3;
+    transition:1s ease;
+}
+
+.card h2{
+    font-size:22px;
+    font-weight:normal;
+    color:#63202c;
+    margin-bottom:18px;
+}
+
+.card p{
+    font-family:"Segoe UI",sans-serif;
+    font-size:14px;
+    color:#68585b;
+}
+
+.label{
+    position:absolute;
+    bottom:-43px;
+    width:100%;
+    text-align:center;
+    font-family:"Segoe UI",sans-serif;
+    font-size:12px;
+    letter-spacing:3px;
+    color:#b99da2;
+}
+
+/* Open animation */
+.open .flap{
+    transform:rotateX(180deg);
+}
+
+.open .seal{
+    opacity:0;
+    transform:translateX(-50%) scale(.7);
+}
+
+.open .card{
+    transform:translate(-50%,-130px);
+    opacity:1;
+}
+
+/* Message */
+.message{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 1s ease;
+}
+
+.message-box{
+    width:min(610px,92vw);
+    padding:58px 35px;
+    text-align:center;
+    background:rgba(19,13,15,.9);
+    border:1px solid rgba(142,38,55,.55);
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.55),
+        inset 0 0 35px rgba(91,24,37,.08);
+    transform:translateY(25px);
+    transition:transform 1s ease;
+}
+
+.ornament{
+    color:#9c3345;
+    font-size:20px;
+    margin-bottom:20px;
+}
+
+.message-box h1{
+    font-size:31px;
+    font-weight:normal;
+    color:#eee4df;
+    margin-bottom:25px;
+    letter-spacing:.3px;
+}
+
+.line{
+    width:55px;
+    height:1px;
+    background:#8e2637;
+    margin:0 auto 25px;
+}
+
+.message-box p{
+    font-family:"Segoe UI",sans-serif;
+    font-size:16px;
+    line-height:2;
+    color:#cdbfc0;
+}
+
+.signature{
+    margin-top:32px;
+    color:#a86b76;
+    font-size:15px;
+    font-style:italic;
+}
+
+.opened .envelope-wrap{
+    opacity:0;
+    transform:scale(.92);
+    pointer-events:none;
+}
+
+.opened .message{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.opened .message-box{
+    transform:translateY(0);
+}
+
+@media(max-width:500px){
+    .envelope-wrap{transform:scale(.88)}
+    .message-box{padding:45px 23px}
+    .message-box h1{font-size:25px}
+    .message-box p{font-size:14px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+
+    <div class="envelope-wrap" id="envelope" onclick="openLetter()">
+
+        <div class="card">
+            <h2>Một lời nhắn nhỏ</h2>
+            <p>Dành riêng cho Ánh.</p>
+        </div>
+
+        <div class="flap"></div>
+        <div class="envelope"></div>
+        <div class="seal">♥</div>
+
+        <div class="label">NHẤN ĐỂ MỞ</div>
+    </div>
+
+    <div class="message">
+        <div class="message-box">
+
+            <div class="ornament">✦</div>
+
+            <div class="line"></div>
+
+            <h1>Chào buổi sáng, mèo nhỏ.</h1>
+
+            <p>
+                Chúc mèo nhỏ một ngày mới thật tốt lành.<br>
+                Mong mọi chuyện hôm nay đều thuận lợi,<br>
+                tâm trạng luôn nhẹ nhàng<br>
+                và không bị buồn ngủ<br>
+                29/09/2026
+            </p>
+
+            <div class="signature">
+                Một lời chúc nhỏ, dành riêng cho Ánh.
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+function openLetter(){
+    const envelope=document.getElementById("envelope");
+    const scene=document.querySelector(".scene");
+
+    envelope.classList.add("open");
+
+    setTimeout(function(){
+        scene.classList.add("opened");
+    },1200);
+}
+</script>
+
+</body>
+</html>
